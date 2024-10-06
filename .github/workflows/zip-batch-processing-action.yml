@@ -31,7 +31,6 @@ jobs:
       # Step 4: Run the Python tool to batch process ZIP extraction and Git push
       - name: Run Python batch processor
         run: |
-          # Run the Python batch processor script
           python3 zip_batch_processor.py
 
       # Step 5: Clean up the file list
