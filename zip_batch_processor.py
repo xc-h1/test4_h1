@@ -24,42 +24,41 @@ def extract_file(zip_path, file):
         print(f"[Error] Failed to extract {file}: {e}")
         return None
 
-# Function to commit and push a single file
-def git_commit_and_push(file):
+# Function to commit and push a batch of files together
+def git_commit_and_push(files):
     try:
-        # Check if the file exists after extraction
-        if os.path.isfile(file):
-            # Commit and push the extracted file
-            subprocess.run(["git", "add", file], check=True)
-            subprocess.run(["git", "commit", "-m", f"Add extracted file: {file}"], check=True)
-            subprocess.run(["git", "push"], check=True)
+        # Stage all files in the batch
+        for file in files:
+            if os.path.isfile(file):
+                subprocess.run(["git", "add", file], check=True)
+            else:
+                print(f"[Error] File not found for git add: {file}")
+        
+        # Commit all staged files together
+        subprocess.run(["git", "commit", "-m", "Batch add of extracted files"], check=True)
+        # Push all committed changes
+        subprocess.run(["git", "push", "origin", "master"], check=True)
 
-            # Clean up the file after push
+        # Clean up the files after push
+        for file in files:
             os.remove(file)
             print(f"[Success] Pushed and deleted: {file}")
-        else:
-            print(f"[Error] File not found after extraction: {file}")
     except subprocess.CalledProcessError as e:
-        print(f"[Error] Git operation failed for {file}: {e}")
+        print(f"[Error] Git operation failed for batch: {e}")
     except Exception as e:
-        print(f"[Error] Failed to delete {file}: {e}")
+        print(f"[Error] Failed to delete files: {e}")
 
 # Process each batch by extracting files and pushing them to the repository
 def process_batch(zip_path, batch):
-    threads = []
+    extracted_files = []
     for file in batch:
-        t = threading.Thread(target=process_file, args=(zip_path, file))
-        threads.append(t)
-        t.start()
-
-    for t in threads:
-        t.join()
-
-# Function to handle the processing of a single file: extract, push, and clean up
-def process_file(zip_path, file):
-    extracted_file = extract_file(zip_path, file)
-    if extracted_file:
-        git_commit_and_push(extracted_file)
+        extracted_file = extract_file(zip_path, file)
+        if extracted_file:
+            extracted_files.append(extracted_file)
+    
+    # Once all files in the batch are extracted, commit and push them together
+    if extracted_files:
+        git_commit_and_push(extracted_files)
 
 # Main function to process files in batches
 def main():
