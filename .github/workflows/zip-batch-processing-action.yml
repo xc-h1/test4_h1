@@ -15,15 +15,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Install unzip utility and Python dependencies
+      # Step 2: Install 7zip and Python dependencies
       - name: Setup environment
-        run: sudo apt-get install -y unzip python3
+        run: |
+          sudo apt-get install -y p7zip-full python3
 
       # Step 3: List files in the ZIP and store in file_list.txt
       - name: List files in ZIP
         id: list_files
         run: |
-          unzip -l zbbig2.zip | awk '/assets\// {print $NF}' > file_list.txt
+          7z l zbbig2.zip | awk '/assets\// {print $NF}' > file_list.txt
           echo "Successfully listed files to file_list.txt."
           cat file_list.txt
 
