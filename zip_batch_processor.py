@@ -47,7 +47,7 @@ def git_commit_and_push(files):
         # Commit all staged files together
         subprocess.run(["git", "commit", "-m", "Batch add of extracted files"], check=True)
         # Push all committed changes
-        subprocess.run(["git", "push", "origin", "master"], check=True)
+        subprocess.run(["git", "push", "origin", "main"], check=True)
 
         # Clean up the files after push
         for file in files:
