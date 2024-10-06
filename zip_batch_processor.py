@@ -2,15 +2,22 @@ import subprocess
 import os
 import threading
 
-# Function to extract a single file using 7z
+# Function to extract a single file using 7z and check its actual output location
 def extract_file(zip_path, file):
     try:
-        result = subprocess.run(['7z', 'e', zip_path, file], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        print(f"[Success] Extracted: {file}")
-        return True
+        # Extracting file to the current directory
+        result = subprocess.run(['7z', 'e', zip_path, file, '-o./extracted'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        extracted_file_path = f"./extracted/{file}"
+        
+        if os.path.isfile(extracted_file_path):
+            print(f"[Success] Extracted: {extracted_file_path}")
+            return extracted_file_path
+        else:
+            print(f"[Error] Extracted, but file not found in expected path: {extracted_file_path}")
+            return None
     except subprocess.CalledProcessError as e:
         print(f"[Error] Failed to extract {file}: {e}")
-        return False
+        return None
 
 # Function to commit and push a single file
 def git_commit_and_push(file):
@@ -45,13 +52,18 @@ def process_batch(zip_path, batch):
 
 # Function to handle the processing of a single file: extract, push, and clean up
 def process_file(zip_path, file):
-    if extract_file(zip_path, file):
-        git_commit_and_push(file)
+    extracted_file = extract_file(zip_path, file)
+    if extracted_file:
+        git_commit_and_push(extracted_file)
 
 # Main function to process files in batches
 def main():
     zip_path = 'zbbig2.zip'  # Path to the ZIP file
     batch_size = 5  # Set the desired batch size
+
+    # Create a directory for extracted files if not exists
+    if not os.path.exists('./extracted'):
+        os.makedirs('./extracted')
 
     # Read the list of files to be processed from file_list.txt
     with open('file_list.txt', 'r') as f:
