@@ -2,6 +2,16 @@ import subprocess
 import os
 import threading
 
+# Function to set Git user configuration
+def set_git_config():
+    try:
+        # Set user email and name for Git
+        subprocess.run(["git", "config", "--global", "user.email", "you@example.com"], check=True)
+        subprocess.run(["git", "config", "--global", "user.name", "Your Name"], check=True)
+        print("[Success] Git user configuration set.")
+    except subprocess.CalledProcessError as e:
+        print(f"[Error] Failed to set Git configuration: {e}")
+
 # Function to extract a single file using 7z and check its actual output location
 def extract_file(zip_path, file):
     try:
@@ -64,6 +74,9 @@ def process_batch(zip_path, batch):
 def main():
     zip_path = 'zbbig2.zip'  # Path to the ZIP file
     batch_size = 5  # Set the desired batch size
+
+    # Set Git configuration for user identity
+    set_git_config()
 
     # Create a directory for extracted files if not exists
     if not os.path.exists('./extracted'):
