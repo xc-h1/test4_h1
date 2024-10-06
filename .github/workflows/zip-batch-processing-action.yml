@@ -28,11 +28,13 @@ jobs:
           echo "Successfully listed files to file_list.txt."
           cat file_list.txt
 
-      # Step 4: Run the Python tool to batch process ZIP extraction and Git push
+      # Step 4: Run the Python batch processor
       - name: Run Python batch processor
         run: |
           python3 zip_batch_processor.py
 
-      # Step 5: Clean up the file list
+      # Step 5: Clean up
       - name: Clean up
-        run: rm -f file_list.txt
+        run: |
+          rm -f file_list.txt
+          rm -rf ./extracted
