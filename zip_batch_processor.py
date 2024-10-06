@@ -5,10 +5,15 @@ import threading
 # Function to extract a single file using 7z and check its actual output location
 def extract_file(zip_path, file):
     try:
-        # Extracting file to the current directory
-        result = subprocess.run(['7z', 'e', zip_path, file, '-o./extracted'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        extracted_file_path = f"./extracted/{file}"
+        # Extracting file with directory structure
+        result = subprocess.run(['7z', 'x', zip_path, file, '-o./extracted'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         
+        # Extract the output from stdout to verify where the file was extracted
+        output = result.stdout
+        print(output)  # Optionally print the extraction output for debugging
+        
+        # Check the extracted file's path based on the output
+        extracted_file_path = f"./extracted/{file}"
         if os.path.isfile(extracted_file_path):
             print(f"[Success] Extracted: {extracted_file_path}")
             return extracted_file_path
