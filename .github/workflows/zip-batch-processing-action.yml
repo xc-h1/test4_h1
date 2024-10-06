@@ -17,9 +17,7 @@ jobs:
 
       # Step 2: Install unzip utility and Python dependencies
       - name: Setup environment
-        run: |
-          sudo apt-get install -y unzip
-          sudo apt-get install -y python3 python3-pip
+        run: sudo apt-get install -y unzip python3
 
       # Step 3: List files in the ZIP and store in file_list.txt
       - name: List files in ZIP
@@ -32,10 +30,7 @@ jobs:
       # Step 4: Run the Python tool to batch process ZIP extraction and Git push
       - name: Run Python batch processor
         run: |
-          # Install necessary Python packages
-          pip3 install zipfile
-
-          # Download and run the Python batch processor script
+          # Run the Python batch processor script
           python3 zip_batch_processor.py
 
       # Step 5: Clean up the file list
