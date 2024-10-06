@@ -1,0 +1,66 @@
+import subprocess
+import os
+import zipfile
+import threading
+
+# Function to extract a single file from the ZIP archive
+def extract_file(zip_path, file):
+    try:
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extract(file)
+        print(f"[Success] Extracted: {file}")
+    except Exception as e:
+        print(f"[Error] Failed to extract {file}: {e}")
+
+# Function to commit and push a single file
+def git_commit_and_push(file):
+    try:
+        # Configure git user
+        subprocess.run(["git", "config", "--global", "user.name", "github-actions[bot]"], check=True)
+        subprocess.run(["git", "config", "--global", "user.email", "github-actions[bot]@users.noreply.github.com"], check=True)
+
+        # Commit and push the extracted file
+        subprocess.run(["git", "add", file], check=True)
+        subprocess.run(["git", "commit", "-m", f"Add extracted file: {file}"], check=True)
+        subprocess.run(["git", "push"], check=True)
+
+        # Clean up the file after push
+        os.remove(file)
+        print(f"[Success] Pushed and deleted: {file}")
+    except subprocess.CalledProcessError as e:
+        print(f"[Error] Git operation failed for {file}: {e}")
+    except Exception as e:
+        print(f"[Error] Failed to delete {file}: {e}")
+
+# Process each batch by extracting files and pushing them to the repository
+def process_batch(zip_path, batch):
+    threads = []
+    for file in batch:
+        t = threading.Thread(target=process_file, args=(zip_path, file))
+        threads.append(t)
+        t.start()
+
+    for t in threads:
+        t.join()
+
+# Function to handle the processing of a single file: extract, push, and clean up
+def process_file(zip_path, file):
+    extract_file(zip_path, file)
+    git_commit_and_push(file)
+
+# Main function to process files in batches
+def main():
+    zip_path = 'zbbig2.zip'  # Path to the ZIP file
+    batch_size = 5  # Set the desired batch size
+
+    # Read the list of files to be processed from file_list.txt
+    with open('file_list.txt', 'r') as f:
+        files = f.read().splitlines()
+
+    # Split files into batches and process each batch
+    for i in range(0, len(files), batch_size):
+        batch = files[i:i + batch_size]
+        process_batch(zip_path, batch)
+
+if __name__ == "__main__":
+    main()
