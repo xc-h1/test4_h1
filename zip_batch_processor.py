@@ -1,15 +1,13 @@
 import subprocess
 import os
-import zipfile
 import threading
 
-# Function to extract a single file from the ZIP archive
+# Function to extract a single file using 7z
 def extract_file(zip_path, file):
     try:
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extract(file)
+        subprocess.run(['7z', 'e', zip_path, file], check=True)
         print(f"[Success] Extracted: {file}")
-    except Exception as e:
+    except subprocess.CalledProcessError as e:
         print(f"[Error] Failed to extract {file}: {e}")
 
 # Function to commit and push a single file
