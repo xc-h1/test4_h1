@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout only the ZIP file and Python script
-      - name: Checkout only necessary files
+      # Step 1: Checkout the repository
+      - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 1  # Limits history fetching to the latest commit
@@ -42,3 +42,4 @@ jobs:
       - name: Clean up
         run: |
           rm -f file_list.txt
+          rm -rf ./extracted
