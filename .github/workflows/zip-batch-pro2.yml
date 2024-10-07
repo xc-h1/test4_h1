@@ -12,14 +12,14 @@ jobs:
 
     steps:
       # Step 1: Checkout only necessary files
-      - name: Checkout only necessary files
+      - name: Checkout necessary files
         uses: actions/checkout@v3
         with:
-          fetch-depth: 1  # Limits history fetching to the latest commit
+          fetch-depth: 1  # Limit history fetching to the latest commit
           sparse-checkout: |
             zbbig2.zip
             zip_batch_processor.py
-          # Use sparse-checkout cone mode for better performance
+            extracted2/
           sparse-checkout-cone-mode: true 
 
       # Step 2: Install 7zip and Python dependencies
