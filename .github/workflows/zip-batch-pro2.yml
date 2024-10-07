@@ -11,14 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Initialize a sparse checkout, excluding '/extracted'
+      # Step 1: Checkout specific directories, excluding 'extracted'
       - name: Checkout repository with sparse checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 1  # Limits history fetching to the latest commit
-          sparse-checkout: |
-            !extracted/
-            # Add more directories you want to exclude here
 
       # Step 2: Install 7zip and Python dependencies
       - name: Setup environment
