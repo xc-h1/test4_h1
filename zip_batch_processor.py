@@ -116,14 +116,14 @@ def set_git_config():
 def extract_file(zip_path, file):
     try:
         # Extracting file with directory structure
-        result = subprocess.run(['7z', 'x', zip_path, file, '-o./extracted'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        result = subprocess.run(['7z', 'x', zip_path, file, '-o./extracted2'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         
         # Extract the output from stdout to verify where the file was extracted
         output = result.stdout
         print(output)  # Optionally print the extraction output for debugging
         
         # Check the extracted file's path based on the output
-        extracted_file_path = f"./extracted/{file}"
+        extracted_file_path = f"./extracted2/{file}"
         if os.path.isfile(extracted_file_path):
             print(f"[Success] Extracted: {extracted_file_path}")
             return extracted_file_path
@@ -181,8 +181,8 @@ def main():
     set_git_config()
 
     # Create a directory for extracted files if not exists
-    if not os.path.exists('./extracted'):
-        os.makedirs('./extracted')
+    if not os.path.exists('./extracted2'):
+        os.makedirs('./extracted2')
 
     # Read the list of files to be processed from file_list.txt
     with open('file_list.txt', 'r') as f:
